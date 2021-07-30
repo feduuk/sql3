@@ -1,0 +1,53 @@
+CREATE PROCEDURE correction()
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+	row_with_low_salary RECORD;
+	cur CURSOR for 
+	SELECT * FROM s WHERE salary < 500;
+BEGIN
+	OPEN cur;
+	LOOP
+		MOVE cur;
+		EXIT WHEN NOT FOUND;
+		UPDATE s
+		SET salary = 500
+		WHERE CURRENT OF cur;
+	END LOOP;
+	CLOSE cur;
+END;
+$$;
+
+
+
+
+
+CREATE TABLE tarif_log(
+id SERIAL,
+kt INT,
+nt VARCHAR(20),
+monthfee NUMERIC(12,2),
+monthmins INT,
+minfee NUMERIC(12,2),
+changed_on TIMESTAMP(6)
+);
+
+
+CREATE FUNCTION log()
+	RETURNS TRIGGER
+	LANGUAGE plpgsql
+AS $$
+BEGIN
+	INSERT INTO tarif_log(kt, nt, monthfee, monthmins, minfee, changed_on) VALUES
+	(OLD.kt, OLD.nt, OLD.monthfee, OLD.monthmins, OLD.minfee, now());
+	RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER t_log
+	BEFORE UPDATE
+	ON t
+	FOR EACH ROW
+	EXECUTE PROCEDURE log();
+
+

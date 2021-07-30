@@ -1,0 +1,84 @@
+CREATE DATABASE it_company;
+
+\c it_company;
+
+CREATE TABLE location(
+office_name VARCHAR(50),
+address VARCHAR(50),
+PRIMARY KEY(office_name)
+);
+
+
+CREATE TABLE team(
+team_code SERIAL, 
+distributed BOOLEAN,
+PRIMARY KEY(team_code)
+);
+
+
+CREATE TABLE employee(
+employee_code INT,
+first_name VARCHAR(50),
+last_name VARCHAR(50),
+job VARCHAR(50),
+salary INT,
+team INT,
+office VARCHAR(50),
+phone_number VARCHAR(50),
+address VARCHAR(50),
+PRIMARY KEY(employee_code),
+FOREIGN KEY(team) REFERENCES team(team_code),
+FOREIGN KEY(office) REFERENCES location(office_name)
+);
+
+
+CREATE TABLE customer(
+customer_code INT,
+customer_name VARCHAR(50),
+phone_number VARCHAR(50),
+address VARCHAR(50),
+PRIMARY KEY(customer_code)
+);
+
+
+CREATE TABLE project(
+project_code INT,
+management VARCHAR(50),
+team INT,
+customer INT,
+cost INT,
+deadline DATE,
+PRIMARY KEY(project_code),
+FOREIGN KEY(team) REFERENCES team(team_code),
+FOREIGN KEY(customer) REFERENCES customer(customer_code)
+);
+
+
+
+INSERT INTO location VALUES 
+('Moscow', 'Russia, Moscow, central street,32'),
+('New York', 'USA, New York, 2nd street, 2');
+
+
+INSERT INTO team(distributed) VALUES
+(false),
+(false);
+
+
+INSERT INTO employee VALUES 
+(1, 'John', 'Wick', 'tester', 3000, 1, 'New York', '555', 'New York, 1st street, 11'),
+(2, 'Mike', 'Cooper', 'developer', 1000, 1, 'New York', '777', 'New York, 1st street, 49'),
+(3, 'Donatelo', 'Rock', 'programmer', 500, 1, 'New York', '333', 'New York, 2st street, 4'),
+(4, 'Dmitry', 'Ivanov', 'programmer', 200, 2, 'Moscow', '89371115522', 'Moscow, kremlin');
+
+
+INSERT INTO customer VALUES 
+(100, 'Telecom', '999', 'Russia, Moscow, Central street, 1'),
+(101, 'Military', '911', 'USA, Washington DC, Pentagon');
+
+
+INSERT INTO project VALUES 
+(1, 'Web division', 2, 100, 25000, '2022-01-01'),
+(2, 'Mobile app division', 1, 101, 30000000, '2025-01-01');
+
+
